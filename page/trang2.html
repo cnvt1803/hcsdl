@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang 2 - Đánh giá và Xếp hạng</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-navigation {
+            text-align: center;
+            padding: 20px 0;
+            background-color: white;
+            margin-bottom: 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-btn {
+            background-color: #f8f9fa;
+            color: #f00530;
+            border: 2px solid #f00530;
+            padding: 12px 30px;
+            margin: 0 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+
+        .page-btn:hover {
+            background-color: #f00530;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .page-btn.active {
+            background-color: #f00530;
+            color: white;
+        }
+
+        .button-container {
+            text-align: center;
+            padding: 25px 0;
+            background-color: white;
+            margin-bottom: 20px;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-container button {
+            background-color: #4a90e2;
+            color: white;
+            margin: 0 10px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .button-container button:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 25px;
+            width: 50%;
+            border-radius: 10px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+        }
+
+        form button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .result-table {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 90%;
+        }
+
+        .table-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4a90e2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Responsive table */
+        @media screen and (max-width: 768px) {
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .logo img {
+            width: 50px;
+            /* Điều chỉnh kích thước logo tùy ý */
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="logo">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTieK-z4xw91yEVZcoVrm7kumtAiIqWHGUEPtNj4K3vLelITbY-P6w44uDTcyLGizP8DGs&usqp=CAU"
+            alt="Logo">
+    </div>
+
+    <!-- Navigation -->
+    <div class="page-navigation">
+        <button onclick="window.location.href='trang1.html'" class="page-btn">Trang 1</button>
+        <button class="page-btn active">Trang 2</button>
+        <button onclick="window.location.href='trang3.html'" class="page-btn">Trang 3</button>
+    </div>
+
+    <!-- Main Buttons -->
+    <div class="button-container">
+        <button onclick="openModal('ratingModal')">Số điểm đánh giá</button>
+        <button onclick="openModal('historyModal')">Lịch sử mua hàng của Khách hàng</button>
+    </div>
+
+    <!-- Modal Số điểm đánh giá -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('ratingModal')">&times;</span>
+            <h2>Số điểm đánh giá</h2>
+            <form onsubmit="handleSubmit(event, 'rating')">
+                <div class="form-group">
+                    <label>Tên sản phẩm:</label>
+                    <input type="text" name="productName" required>
+                </div>
+                <button type="submit">Xác nhận</button>
+            </form>
+        </div>
+    </div>
+    <!-- Modal Xếp hạng cửa hàng -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('historyModal')">&times;</span>
+            <h2>Lịch sử mua hàng</h2>
+            <form onsubmit="handleSubmit(event, 'history')">
+                <div class="form-group">
+                    <label>Số điện thoại:</label>
+                    <input type="tel" name="Sdt" pattern="[0-9]{10}" required>
+                </div>
+                <div class="form-group">
+                    <label>Ngày bắt đầu:</label>
+                    <input type="date" name="startDay" required>
+                </div>
+                <div class="form-group">
+                    <label>Ngày kết thúc:</label>
+                    <input type="date" name="endDay" required>
+                </div>
+                <button type="submit">Xác nhận</button>
+            </form>
+        </div>
+    </div>
+    <!-- Bảng kết quả đánh giá -->
+    <div id="ratingTable" class="result-table" style="display: none;">
+        <div class="table-container">
+            <h2>Kết quả đánh giá</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã shop</th>
+                        <th>Mã sản phẩm</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Trung bình số sao đánh giá</th>
+                        <th>Số lượng đánh giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dữ liệu mẫu -->
+                    <tr>
+                        <td>SHOP001</td>
+                        <td>SP001</td>
+                        <td>Áo thun nam</td>
+                        <td>4.5</td>
+                        <td>120</td>
+                    </tr>
+                    <!-- Thêm dữ liệu khác ở đây -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bảng xếp hạng cửa hàng -->
+    <div id="xemlichsu" class="result-table" style="display: none;">
+        <div class="table-container">
+            <h2>Lịch sử mua hàng</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <th>Trạng thái</th>
+                        <th>Số lượng đơn hàng</th>
+                        <th>Tổng tiền đã chi</th>
+                        <th>Ngày thanh toán</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dữ liệu mẫu -->
+                    <!-- Thêm dữ liệu khác ở đây -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+        // Đóng modal khi click bên ngoài
+        window.onclick = function (event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = "none";
+            }
+        }
+
+        async function handleSubmit(event, action) {
+            event.preventDefault(); // Ngừng việc gửi form mặc định
+
+            const formData = new FormData(event.target);
+            const params = new URLSearchParams();
+
+            // Kiểm tra và format ngày
+            const startDate = new Date(formData.get('startDay'));
+            const endDate = new Date(formData.get('endDay'));
+            if (startDate > endDate) {
+                alert("Ngày bắt đầu không thể lớn hơn ngày kết thúc.");
+                return;
+            }
+
+            formData.forEach((value, key) => {
+                if (key.includes("Day")) { // Kiểm tra các trường liên quan đến ngày
+                    const date = new Date(value);
+                    if (isNaN(date)) {
+                        alert("Ngày tháng không hợp lệ");
+                        return;
+                    }
+                    const formattedDate = date.toISOString().split("T")[0];
+                    params.append(key, formattedDate);
+                } else if (key === "Sdt" && !/^\d{10}$/.test(value)) {
+                    alert("Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 chữ số.");
+                    return;
+                } else {
+                    params.append(key, value);
+                }
+            });
+            let url = "";
+            if (action === "history") {
+             // In URL để kiểm tra tham số
+                url = `http://localhost:5001/database/lichsu?${params.toString()}`;
+                console.log("URL:", url);
+            }
+            // ELSE KHI LÀ SỐ ĐIỂM ĐÁNH GIÁ
+            try {
+                // Gửi yêu cầu tới API
+                const response = await fetch(url, {
+                    method: "GET",
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || "Có lỗi xảy ra khi kết nối tới API");
+                }
+
+                if (action === "history") {
+                    updateHistoryTable(result); // Hàm để cập nhật bảng lịch sử mua hàng
+                    document.getElementById("xemlichsu").style.display = "block"; // Hiển thị bảng kết quả nếu có dữ liệu
+                }
+                // ELSE KHI LÀ SỐ ĐIỂM ĐÁNH GIÁ
+            } catch (error) {
+                console.error("Error:", error);
+                alert(`Lỗi: ${error.message}`);
+            }
+            closeModal(action + "Modal");
+        }
+
+
+        function updateHistoryTable(data) {
+            const tableBody = document.getElementById("xemlichsu").getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = "";
+
+            // Kiểm tra nếu có dữ liệu trả về
+            if (data && data.length > 0) {
+                // Lặp qua từng item trong dữ liệu
+                data.forEach(item => {
+                    const row = document.createElement("tr");
+                    //Tên sẩn phẩm
+                    const productNameCell = document.createElement("td");
+                    productNameCell.textContent = item.Ten_San_Pham || 'N/A'; // Trạng thái nếu có
+                    row.appendChild(productNameCell);
+                    // Tạo ô cho trạng thái
+                    const statusCell = document.createElement("td");
+                    statusCell.textContent = item.TrangThai || 'N/A'; // Trạng thái nếu có
+                    row.appendChild(statusCell);
+
+                    // Tạo ô cho số đơn hàng
+                    const orderCountCell = document.createElement("td");
+                    orderCountCell.textContent = item.SoLuongDonHang || 0; // Số đơn hàng
+                    row.appendChild(orderCountCell);
+
+                    // Tạo ô cho tổng số tiền đã chi tiêu
+                    const totalSpentCell = document.createElement("td");
+                    totalSpentCell.textContent = item.TongTienDaChi ? item.TongTienDaChi.toFixed(2) + "đ" : '0đ'; // Định dạng tổng chi tiêu
+                    row.appendChild(totalSpentCell);
+
+                    // Tạo ô cho ngày thanh toán
+                    const paymentDateCell = document.createElement("td");
+                    paymentDateCell.textContent = item.NgayThanhToan || 'N/A'; // Ngày thanh toán nếu có
+                    row.appendChild(paymentDateCell);
+
+                    // Thêm hàng vào bảng
+                    tableBody.appendChild(row);
+                });
+                document.getElementById("xemlichsu").style.display = "block"; // Hiển thị bảng kết quả
+            } else {
+                // Nếu không có dữ liệu, hiển thị thông báo
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+                cell.colSpan = 4; // Chiếm toàn bộ các cột
+                cell.textContent = "Không có dữ liệu";
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+            }
+        }
+    </script>
+</body>
+
+</html>

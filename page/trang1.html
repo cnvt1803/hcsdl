@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý thông tin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 25px;
+            width: 50%;
+            border-radius: 10px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #4a90e2;
+            border-radius: 5px;
+            border: 2px solid #f1f1f1;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #357abd;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        button {
+            padding: 12px 25px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .button-container {
+            text-align: center;
+            padding: 25px 0;
+            background-color: white;
+            margin-bottom: 20px;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-container button {
+            background-color: #4a90e2;
+            color: white;
+            margin: 0 10px;
+        }
+
+        .button-container button:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+        }
+
+        /* Style cho nút submit trong form */
+        form button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Style cho tiêu đề modal */
+        .modal-content h2 {
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4a90e2;
+        }
+
+        /* Thêm hiệu ứng hover cho input */
+        .form-group input:hover {
+            border-color: #4a90e2;
+        }
+
+        /* Style riêng cho modal xóa */
+        #deleteModal .modal-content {
+            max-width: 400px;
+        }
+
+        #deleteModal form button[type="submit"] {
+            background-color: #dc3545;
+        }
+
+        #deleteModal form button[type="submit"]:hover {
+            background-color: #c82333;
+        }
+
+        .page-navigation {
+            text-align: center;
+            padding: 20px 0;
+            background-color: white;
+            margin-bottom: 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-btn {
+            background-color: #f8f9fa;
+            color: #f00530;
+            border: 2px solid #f00530;
+            padding: 12px 30px;
+            margin: 0 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover {
+            background-color: #f00530;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .page-btn.active {
+            background-color: #f00530;
+            color: white;
+        }
+
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .logo img {
+            width: 50px;
+            /* Điều chỉnh kích thước logo tùy ý */
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="logo">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTieK-z4xw91yEVZcoVrm7kumtAiIqWHGUEPtNj4K3vLelITbY-P6w44uDTcyLGizP8DGs&usqp=CAU"
+            alt="Logo">
+    </div>
+
+    <div class="page-navigation">
+        <button onclick="window.location.href='trang1.html'" class="page-btn active" id="page1Btn">Trang 1</button>
+        <button onclick="window.location.href='trang2.html'" class="page-btn" id="page2Btn">Trang 2</button>
+        <button onclick="window.location.href='trang3.html'" class="page-btn" id="page3Btn">Trang 3</button>
+    </div>
+
+    <div class="button-container">
+        <button onclick="openModal('addModal')">Thêm</button>
+        <button onclick="openModal('editModal')">Sửa</button>
+        <button onclick="openModal('deleteModal')">Xóa</button>
+    </div>
+
+    <!-- Modal Thêm -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addModal')">&times;</span>
+            <h2>Thêm thông tin</h2>
+            <form onsubmit="handleSubmit(event, 'add')">
+                <div class="form-group">
+                    <label>Mã sản phẩm:</label>
+                    <input type="text" name="id" required>
+                </div>
+                <div class="form-group">
+                    <label>Mã cửa hàng:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Tên sản phẩm:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Loại:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Số lượng đã bán:</label>
+                    <input type="number" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Sản phẩm có sẵn trong kho:</label>
+                    <input type="number" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Chính sách đổi trả:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Giá:</label>
+                    <input type="number" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Màu sắc:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Kích cỡ:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <button type="submit">Xác nhận</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Sửa -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editModal')">&times;</span>
+            <h2>Sửa thông tin</h2>
+            <form onsubmit="handleSubmit(event, 'edit')">
+                <div class="form-group">
+                    <label>Mã sản phẩm:</label>
+                    <input type="text" name="id" required>
+                </div>
+                <div class="form-group">
+                    <label>Mã cửa hàng:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Tên sản phẩm:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Loại:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Số lượng đã bán:</label>
+                    <input type="number" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Sản phẩm có sẵn trong kho:</label>
+                    <input type="number" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Chính sách đổi trả:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Giá:</label>
+                    <input type="number" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Màu sắc:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Kích cỡ:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label>Trạng thái:</label>
+                    <input type="text" name="type" required>
+                </div>
+                <button type="submit">Xác nhận</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Xóa -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+            <h2>Xóa thông tin</h2>
+            <form onsubmit="handleSubmit(event, 'delete')">
+                <div class="form-group">
+                    <label>Mã sản phẩm:</label>
+                    <input type="text" name="id" required>
+                </div>
+                <div class="form-group">
+                    <label>Mã cửa hàng:</label>
+                    <input type="text" name="id" required>
+                </div>
+                <button type="submit">Xác nhận</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function handleSubmit(event, action) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+
+            // Xử lý dữ liệu tùy theo action (add/edit/delete)
+            console.log('Action:', action);
+            console.log('Data:', data);
+
+            // Đóng modal sau khi xử lý
+            closeModal(action + 'Modal');
+        }
+
+        // Đóng modal khi click bên ngoài
+        window.onclick = function (event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = "none";
+            }
+        }
+
+        function switchPage(pageId) {
+            // Cập nhật trạng thái active của các nút
+            const buttons = document.querySelectorAll('.page-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(pageId + 'Btn').classList.add('active');
+        }
+
+        // Khởi tạo trang đầu tiên là active
+        window.onload = function () {
+            switchPage('page1');
+        }
+    </script>
+</body>
+
+</html>
